@@ -1555,3 +1555,43 @@ html {
   position: absolute;
   left: 0;
 }
+/* ===== 图片优化 ===== */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 延迟加载 */
+.lazy-load {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lazy-load.loaded {
+  opacity: 1;
+}
+
+/* 律师肖像特殊样式 */
+.team-portrait {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 案例图片悬停效果 */
+.case-image {
+  transition: transform 0.5s ease;
+}
+
+.case-card:hover .case-image {
+  transform: scale(1.05);
+}
+
+/* 背景图片处理 */
+.hero-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
