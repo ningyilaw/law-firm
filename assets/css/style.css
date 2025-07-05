@@ -1427,3 +1427,36 @@ footer .container {
         grid-template-columns: 1fr;
     }
 }
+/* ===== 字体性能优化 ===== */
+@font-face {
+  font-family: "System YaHei";
+  src: local("Microsoft YaHei");
+}
+
+@font-face {
+  font-family: "System PingFang";
+  src: local("PingFang SC");
+}
+
+/* 禁用移动端字体缩放 */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+/* 数字等宽显示 */
+.digit {
+  font-feature-settings: "tnum";
+}
+
+/* 打印字体优化 */
+@media print {
+  body {
+    font-family: "Microsoft YaHei", "SimSun", serif;
+    font-size: 12pt;
+  }
+  
+  .no-print {
+    display: none;
+  }
+}
