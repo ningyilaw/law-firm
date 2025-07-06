@@ -6,6 +6,164 @@
     <title>法律资讯 - 正大律师事务所</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* 新增自动更新板块样式 */
+        .live-legal-updates {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 3rem;
+        }
+        
+        .update-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .refresh-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            background: #0d2b57;
+            transform: translateY(-2px);
+        }
+        
+        .refresh-btn .spinner {
+            display: none;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        
+        .refresh-btn.loading .spinner {
+            display: block;
+        }
+        
+        .refresh-btn.loading .text {
+            display: none;
+        }
+        
+        .update-status {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .news-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        
+        .news-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .news-content {
+            padding: 1.5rem;
+        }
+        
+        .news-source {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .news-source img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        
+        .news-date {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.5rem;
+        }
+        
+        /* 分类筛选器 */
+        .category-filters {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1.25rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* 加载更多 */
+        .load-more {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .update-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -35,32 +193,62 @@
     <section class="page-title">
         <div class="container">
             <h1>法律资讯</h1>
-            <p>最新法律法规解读与实务分析</p>
+            <p>实时更新的法律动态与专业解读</p>
         </div>
     </section>
 
-    <!-- 资讯分类 -->
-    <section class="news-categories">
+    <!-- 自动更新板块 -->
+    <section class="live-legal-updates">
         <div class="container">
-            <div class="category-tabs">
-                <button class="cat-btn active" data-category="all">全部资讯</button>
-                <button class="cat-btn" data-category="laws">新法速递</button>
-                <button class="cat-btn" data-category="analysis">实务分析</button>
-                <button class="cat-btn" data-category="qa">法律问答</button>
-                <button class="cat-btn" data-category="firm">律所动态</button>
+            <div class="update-header">
+                <h2><i class="fas fa-bolt"></i> 实时法律动态</h2>
+                <div>
+                    <span class="update-status">最后更新: <span id="updateTime">刚刚</span></span>
+                    <button id="refreshBtn" class="refresh-btn">
+                        <span class="text">立即刷新</span>
+                        <i class="fas fa-sync-alt spinner"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 分类筛选 -->
+            <div class="category-filters">
+                <button class="filter-btn active" data-category="all">全部</button>
+                <button class="filter-btn" data-category="laws">法律法规</button>
+                <button class="filter-btn" data-category="court">司法动态</button>
+                <button class="filter-btn" data-category="practice">实务指南</button>
+                <button class="filter-btn" data-category="local">地方政策</button>
+            </div>
+            
+            <!-- 资讯列表 -->
+            <div class="news-grid" id="newsContainer">
+                <!-- 动态内容将通过JavaScript加载 -->
+                <div class="news-card skeleton">
+                    <div class="skeleton-image"></div>
+                    <div class="news-content">
+                        <div class="skeleton-line" style="width:60%"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line" style="width:80%"></div>
+                    </div>
+                </div>
+                <!-- 重复5个骨架屏 -->
+            </div>
+            
+            <div class="load-more">
+                <button id="loadMoreBtn" class="btn">加载更多</button>
             </div>
         </div>
     </section>
 
-    <!-- 资讯列表 -->
+    <!-- 精选内容板块（原有手动更新部分） -->
     <section class="news-section">
         <div class="container">
+            <h2 class="section-title">精选法律解读</h2>
             <div class="news-list">
-                <!-- 新法速递 -->
-                <article class="news-item" data-category="laws">
+                <article class="news-item">
                     <div class="news-image">
-                        <img src="assets/images/news1.jpg" alt="新法速递">
-                        <span class="news-category">新法速递</span>
+                        <img src="assets/images/news1.jpg" alt="民法典解读">
+                        <span class="news-category">实务分析</span>
                     </div>
                     <div class="news-content">
                         <div class="news-meta">
@@ -73,111 +261,7 @@
                     </div>
                 </article>
                 
-                <!-- 实务分析 -->
-                <article class="news-item" data-category="analysis">
-                    <div class="news-image">
-                        <img src="assets/images/news2.jpg" alt="实务分析">
-                        <span class="news-category">实务分析</span>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="far fa-calendar-alt"></i> 2023-06-10</span>
-                            <span><i class="far fa-eye"></i> 278</span>
-                        </div>
-                        <h2><a href="news-detail.html">公司股权激励方案设计与税务筹划</a></h2>
-                        <p>股权激励是企业吸引和留住核心人才的重要手段，本文结合最新税收政策分析不同股权激励模式的优劣及税务筹划要点...</p>
-                        <a href="news-detail.html" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-                
-                <!-- 法律问答 -->
-                <article class="news-item" data-category="qa">
-                    <div class="news-image">
-                        <img src="assets/images/news3.jpg" alt="法律问答">
-                        <span class="news-category">法律问答</span>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="far fa-calendar-alt"></i> 2023-06-05</span>
-                            <span><i class="far fa-eye"></i> 412</span>
-                        </div>
-                        <h2><a href="news-detail.html">离婚时如何证明对方转移财产？</a></h2>
-                        <p>离婚案件中财产分割往往是争议焦点，本文介绍如何收集对方转移财产的证据以及法律应对策略...</p>
-                        <a href="news-detail.html" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-                
-                <!-- 律所动态 -->
-                <article class="news-item" data-category="firm">
-                    <div class="news-image">
-                        <img src="assets/images/news4.jpg" alt="律所动态">
-                        <span class="news-category">律所动态</span>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="far fa-calendar-alt"></i> 2023-05-28</span>
-                            <span><i class="far fa-eye"></i> 189</span>
-                        </div>
-                        <h2><a href="news-detail.html">我所成功举办2023企业法律风险防范研讨会</a></h2>
-                        <p>5月25日，我所主办的"2023企业法律风险防范研讨会"圆满举行，吸引了100余家企业代表参加...</p>
-                        <a href="news-detail.html" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-                
-                <!-- 新法速递2 -->
-                <article class="news-item" data-category="laws">
-                    <div class="news-image">
-                        <img src="assets/images/news5.jpg" alt="新法速递">
-                        <span class="news-category">新法速递</span>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="far fa-calendar-alt"></i> 2023-05-20</span>
-                            <span><i class="far fa-eye"></i> 356</span>
-                        </div>
-                        <h2><a href="news-detail.html">《反不正当竞争法》修订亮点解析</a></h2>
-                        <p>新修订的《反不正当竞争法》将于2023年8月1日起施行，本文分析修订后的七大亮点及对企业的影响...</p>
-                        <a href="news-detail.html" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-                
-                <!-- 实务分析2 -->
-                <article class="news-item" data-category="analysis">
-                    <div class="news-image">
-                        <img src="assets/images/news6.jpg" alt="实务分析">
-                        <span class="news-category">实务分析</span>
-                    </div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span><i class="far fa-calendar-alt"></i> 2023-05-15</span>
-                            <span><i class="far fa-eye"></i> 298</span>
-                        </div>
-                        <h2><a href="news-detail.html">商业秘密保护实务指南</a></h2>
-                        <p>商业秘密是企业核心竞争力的重要组成部分，本文从法律实务角度分析商业秘密保护的常见误区及正确做法...</p>
-                        <a href="news-detail.html" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-            
-            <div class="pagination">
-                <a href="#" class="page-btn active">1</a>
-                <a href="#" class="page-btn">2</a>
-                <a href="#" class="page-btn">3</a>
-                <a href="#" class="page-btn next">下一页 <i class="fas fa-arrow-right"></i></a>
-            </div>
-        </div>
-    </section>
-
-    <!-- 订阅资讯 -->
-    <section class="newsletter">
-        <div class="container">
-            <div class="newsletter-box">
-                <h2>订阅法律资讯</h2>
-                <p>定期获取最新法律法规解读和实务指南</p>
-                <form class="newsletter-form">
-                    <input type="email" placeholder="输入您的电子邮箱">
-                    <button type="submit" class="btn">订阅</button>
-                </form>
+                <!-- 其他精选内容... -->
             </div>
         </div>
     </section>
@@ -187,31 +271,202 @@
         <!-- 同首页页脚 -->
     </footer>
 
-    <script src="assets/js/main.js"></script>
+    <!-- 自动更新脚本 -->
     <script>
-        // 资讯分类筛选
-        document.addEventListener('DOMContentLoaded', function() {
-            const catBtns = document.querySelectorAll('.cat-btn');
-            const newsItems = document.querySelectorAll('.news-item');
-            
-            catBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // 更新按钮状态
-                    catBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // 筛选资讯
-                    const category = this.getAttribute('data-category');
-                    newsItems.forEach(item => {
-                        if (category === 'all' || item.getAttribute('data-category') === category) {
-                            item.style.display = 'flex';
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                });
+        // 配置法律资讯源
+        const newsSources = [
+            {
+                name: "最高人民法院",
+                category: "court",
+                icon: "assets/images/court-icon.png",
+                api: "https://api.rss2json.com/v1/api.json?rss_url=http://www.court.gov.cn/xwzx/fyxw/rss.xml",
+                maxItems: 10
+            },
+            {
+                name: "中国政府网",
+                category: "laws",
+                icon: "assets/images/gov-icon.png",
+                api: "https://api.rss2json.com/v1/api.json?rss_url=http://www.gov.cn/zhengce/flfg/rss.xml",
+                maxItems: 10
+            },
+            {
+                name: "司法部",
+                category: "laws",
+                icon: "assets/images/justice-icon.png",
+                api: "https://api.rss2json.com/v1/api.json?rss_url=http://www.moj.gov.cn/rss/news.xml",
+                maxItems: 8
+            },
+            {
+                name: "法律图书馆",
+                category: "practice",
+                icon: "assets/images/lawlib-icon.png",
+                api: "https://api.rss2json.com/v1/api.json?rss_url=http://www.law-lib.com/rss/lawnew.xml",
+                maxItems: 8
+            },
+            {
+                name: "北京司法局",
+                category: "local",
+                icon: "assets/images/local-icon.png",
+                api: "https://api.rss2json.com/v1/api.json?rss_url=http://sfj.beijing.gov.cn/rss/zwgk.xml",
+                maxItems: 6
+            }
+        ];
+
+        // DOM元素
+        const newsContainer = document.getElementById('newsContainer');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const updateTimeEl = document.getElementById('updateTime');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+        // 状态变量
+        let currentNews = [];
+        let displayedCount = 6;
+        let currentFilter = 'all';
+        let isLoading = false;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', fetchAllNews);
+
+        // 刷新按钮点击
+        refreshBtn.addEventListener('click', function() {
+            if (isLoading) return;
+            fetchAllNews();
+        });
+
+        // 分类筛选
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.category;
+                filterNews(currentFilter);
             });
         });
+
+        // 加载更多
+        loadMoreBtn.addEventListener('click', function() {
+            displayedCount += 6;
+            renderNews(currentNews);
+        });
+
+        // 获取所有新闻
+        async function fetchAllNews() {
+            try {
+                startLoading();
+                const promises = newsSources.map(source => fetchNews(source));
+                const results = await Promise.all(promises);
+                
+                currentNews = results.flat();
+                currentNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                
+                renderNews(currentNews);
+                updateTimeEl.textContent = new Date().toLocaleTimeString();
+            } catch (error) {
+                console.error('获取法律资讯失败:', error);
+                updateTimeEl.textContent = '更新失败';
+            } finally {
+                stopLoading();
+            }
+        }
+
+        // 从单个源获取新闻
+        async function fetchNews(source) {
+            try {
+                const response = await fetch(source.api);
+                const data = await response.json();
+                
+                return data.items.slice(0, source.maxItems).map(item => ({
+                    title: item.title,
+                    description: truncateText(item.description, 100),
+                    link: item.link,
+                    pubDate: item.pubDate,
+                    source: source.name,
+                    category: source.category,
+                    icon: source.icon
+                }));
+            } catch (error) {
+                console.error(`获取${source.name}新闻失败:`, error);
+                return [];
+            }
+        }
+
+        // 渲染新闻列表
+        function renderNews(news) {
+            const filteredNews = currentFilter === 'all' 
+                ? news 
+                : news.filter(item => item.category === currentFilter);
+            
+            const visibleNews = filteredNews.slice(0, displayedCount);
+            
+            newsContainer.innerHTML = visibleNews.map(newsItem => `
+                <div class="news-card" data-category="${newsItem.category}">
+                    <div class="news-badge">${getCategoryName(newsItem.category)}</div>
+                    <div class="news-content">
+                        <div class="news-source">
+                            <img src="${newsItem.icon}" alt="${newsItem.source}">
+                            ${newsItem.source}
+                        </div>
+                        <h3><a href="${newsItem.link}" target="_blank">${newsItem.title}</a></h3>
+                        <p>${newsItem.description}</p>
+                        <div class="news-date">${formatDate(newsItem.pubDate)}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            loadMoreBtn.style.display = filteredNews.length > displayedCount ? 'block' : 'none';
+        }
+
+        // 筛选新闻
+        function filterNews(category) {
+            displayedCount = 6;
+            renderNews(currentNews);
+        }
+
+        // 辅助函数
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN');
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'laws': '法律法规',
+                'court': '司法动态',
+                'practice': '实务指南',
+                'local': '地方政策'
+            };
+            return names[category] || '最新';
+        }
+
+        function startLoading() {
+            isLoading = true;
+            refreshBtn.classList.add('loading');
+            newsContainer.innerHTML = Array(6).fill(`
+                <div class="news-card skeleton">
+                    <div class="skeleton-image"></div>
+                    <div class="news-content">
+                        <div class="skeleton-line" style="width:60%"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line" style="width:80%"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function stopLoading() {
+            isLoading = false;
+            refreshBtn.classList.remove('loading');
+        }
+
+        // 每1小时自动刷新
+        setInterval(fetchAllNews, 3600000);
     </script>
 </body>
 </html>
