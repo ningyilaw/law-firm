@@ -112,7 +112,9 @@
                     <p>请填写以下表单，我们的专业律师将在24小时内与您联系。所有咨询信息将严格保密。</p>
                     
                     <form id="contactForm" action="https://formsubmit.co/1303220384@qq.com" method="POST">
-                        <!-- 添加FormSubmit.co需要的隐藏字段 -->
+                        <input type="text" name="test" value="测试数据">
+                        <button type="submit">测试提交</button>
+<!--                         <!-- 添加FormSubmit.co需要的隐藏字段 -->
                         <input type="hidden" name="_next" value="https://www.ningyilawfirm.cn/contact.html.html">
                         <input type="hidden" name="_captcha" value="false">
                         <input type="hidden" name="_template" value="table">
@@ -149,7 +151,7 @@
                         <div class="form-group">
                             <label for="message">案情简述 *</label>
                             <textarea id="message" name="message" rows="5" required></textarea>
-                        </div>
+                        </div> -->
                         
                         <button type="submit" class="btn">提交咨询</button>
                     </form>
