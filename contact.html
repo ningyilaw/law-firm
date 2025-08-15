@@ -257,8 +257,8 @@
 
    <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // 表单提交功能
             const contactForm = document.getElementById('contactForm');
-            
             if (contactForm) {
                 contactForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
@@ -280,7 +280,7 @@
                         "_captcha": "false"
                     };
                     
-                    // 验证逻辑（保持不变）
+                    // 验证逻辑
                     if (!formData["姓名"] || !formData["电话"] || !formData["咨询类型"] || !formData["案情简述"]) {
                         alert('请填写所有必填字段');
                         return;
@@ -336,43 +336,45 @@
                     }
                 });
             }
-        // 常见问题切换功能（新增）
-        const faqItems = document.querySelectorAll('.faq-item');
-        faqItems.forEach(item => {
-            const question = item.querySelector('.faq-question');
-            const answer = item.querySelector('.faq-answer');
-            const icon = question.querySelector('i');
-            
-            answer.style.maxHeight = '0';
-            answer.style.overflow = 'hidden';
-            answer.style.transition = 'max-height 0.3s ease-out';
-            
-            question.addEventListener('click', function() {
-                const isActive = item.classList.contains('active');
+        
+            // 常见问题下拉功能
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                const icon = question.querySelector('i');
                 
-                faqItems.forEach(otherItem => {
-                    if (otherItem !== item) {
-                        otherItem.classList.remove('active');
-                        otherItem.querySelector('.faq-answer').style.maxHeight = '0';
-                        otherItem.querySelector('.faq-question i').classList.remove('fa-chevron-up');
-                        otherItem.querySelector('.faq-question i').classList.add('fa-chevron-down');
+                // 初始化状态
+                answer.style.maxHeight = '0';
+                answer.style.overflow = 'hidden';
+                answer.style.transition = 'max-height 0.3s ease-out';
+                
+                // 点击事件
+                question.addEventListener('click', function() {
+                    // 关闭其他所有问题
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.faq-answer').style.maxHeight = '0';
+                            otherItem.querySelector('.faq-question i').classList.remove('fa-chevron-up');
+                            otherItem.querySelector('.faq-question i').classList.add('fa-chevron-down');
+                        }
+                    });
+                    
+                    // 切换当前问题
+                    item.classList.toggle('active');
+                    
+                    if (item.classList.contains('active')) {
+                        answer.style.maxHeight = answer.scrollHeight + 'px';
+                        icon.classList.remove('fa-chevron-down');
+                        icon.classList.add('fa-chevron-up');
+                    } else {
+                        answer.style.maxHeight = '0';
+                        icon.classList.remove('fa-chevron-up');
+                        icon.classList.add('fa-chevron-down');
                     }
                 });
-                
-                item.classList.toggle('active');
-                
-                if (item.classList.contains('active')) {
-                    answer.style.maxHeight = answer.scrollHeight + 'px';
-                    icon.classList.remove('fa-chevron-down');
-                    icon.classList.add('fa-chevron-up');
-                } else {
-                    answer.style.maxHeight = '0';
-                    icon.classList.remove('fa-chevron-up');
-                    icon.classList.add('fa-chevron-down');
-                }
             });
-        });
-    });
         });
     </script>
 </body>
