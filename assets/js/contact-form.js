@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // 4. 设置表单目标和属性
             this.target = 'formsubmit-iframe';
-            this.action = 'https://formsubmit.co/13248230746@163.com'; // 替换为你的邮箱
+            this.action = 'https://formsubmit.co/1303220384@qq.com'; // 替换为你的邮箱
             this.method = 'POST';
 
             // 5. 添加FormSubmit所需隐藏字段
