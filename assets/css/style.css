@@ -139,7 +139,7 @@ nav ul li.active a {
 /* 英雄区域 */
 .hero {
     height: 80vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/hero-bg.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://res.cloudinary.com/dgugqdeex/image/upload/w_1920,h_1080,c_fill/v1755251334/0c630a2608171423f6e539b0e1251e16_kujyft.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
