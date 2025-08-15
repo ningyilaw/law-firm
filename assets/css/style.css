@@ -1595,3 +1595,17 @@ img {
   background-position: center;
   background-repeat: no-repeat;
 }
+
+.faq-answer {
+    transition: max-height 0.3s ease-out;
+    overflow: hidden;
+}
+
+.faq-question {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.faq-question:hover {
+    background-color: #f5f5f5;
+}
