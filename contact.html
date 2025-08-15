@@ -247,12 +247,86 @@
         <!-- 同首页页脚 -->
     </footer>
 
-    <script src="assets/js/main.js"></script>
-    <script>
-        // 常见问题切换
+   <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const faqQuestions = document.querySelectorAll('.faq-question');
+            const contactForm = document.getElementById('contactForm');
+            const submitBtn = document.getElementById('submitBtn');
             
+            if (contactForm) {
+                contactForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // 获取表单数据
+                    const formData = {
+                        name: document.getElementById('name').value.trim(),
+                        phone: document.getElementById('phone').value.trim(),
+                        email: document.getElementById('email').value.trim(),
+                        service: document.getElementById('service').value,
+                        message: document.getElementById('message').value.trim(),
+                        _subject: '新的法律咨询请求',
+                        _template: 'table',
+                        _captcha: 'false'
+                    };
+                    
+                    // 验证逻辑
+                    if (!formData.name || !formData.phone || !formData.service || !formData.message) {
+                        alert('请填写所有必填字段');
+                        return;
+                    }
+                    
+                    if (!/^1[3-9]\d{9}$/.test(formData.phone)) {
+                        alert('请输入有效的手机号码');
+                        return;
+                    }
+                    
+                    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                        alert('请输入有效的电子邮件地址');
+                        return;
+                    }
+
+                    // 显示加载状态
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = '提交中...';
+
+                    try {
+                        // 发送数据到FormSubmit.co
+                        const response = await fetch('https://formsubmit.co/ajax/1303220384@qq.com', {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // 显示成功消息
+                            contactForm.innerHTML = `
+                                <div class="form-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    <h3>提交成功！</h3>
+                                    <p>我们已收到您的咨询请求，专业律师将在24小时内与您联系。</p>
+                                </div>
+                            `;
+                        } else {
+                            throw new Error(result.message || '提交失败');
+                        }
+                    } catch (error) {
+                        console.error('提交错误:', error);
+                        alert(`提交失败: ${error.message}\n请直接拨打电话: 15565615988`);
+                    } finally {
+                        submitBtn.classList.remove('loading');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '提交咨询';
+                    }
+                });
+            }
+
+            // 常见问题切换
+            const faqQuestions = document.querySelectorAll('.faq-question');
             faqQuestions.forEach(question => {
                 question.addEventListener('click', function() {
                     const faqItem = this.parentElement;
