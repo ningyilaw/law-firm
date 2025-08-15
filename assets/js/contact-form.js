@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.textContent = originalBtnText;
                 contactForm.reset();
             }, 5000);
+            this.submit(); 
         });
     }
     
