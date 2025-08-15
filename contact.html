@@ -6,6 +6,25 @@
     <title>联系我们 - 河南宁邑律师事务所</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* 新增表单成功样式 */
+        .form-success {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .form-success i {
+            color: #28a745;
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+        .form-success h3 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -92,7 +111,13 @@
                     <h2>在线咨询</h2>
                     <p>请填写以下表单，我们的专业律师将在24小时内与您联系。所有咨询信息将严格保密。</p>
                     
-                    <form id="contactForm">
+                    <form id="contactForm" action="https://formsubmit.co/sunhaoxuan0410@163.com" method="POST">
+                        <!-- 添加FormSubmit.co需要的隐藏字段 -->
+                        <input type="hidden" name="_next" value="https://yourdomain.com/thank-you.html">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_subject" value="新的法律咨询请求">
+                        
                         <div class="form-group">
                             <label for="name">姓名 *</label>
                             <input type="text" id="name" name="name" required>
@@ -112,12 +137,12 @@
                             <label for="service">咨询类型 *</label>
                             <select id="service" name="service" required>
                                 <option value="">请选择咨询类型</option>
-                                <option value="criminal">刑事辩护</option>
-                                <option value="civil">民商事诉讼</option>
-                                <option value="family">婚姻家事</option>
-                                <option value="corporate">公司法务</option>
-                                <option value="ip">知识产权</option>
-                                <option value="other">其他</option>
+                                <option value="刑事辩护">刑事辩护</option>
+                                <option value="民商事诉讼">民商事诉讼</option>
+                                <option value="婚姻家事">婚姻家事</option>
+                                <option value="公司法务">公司法务</option>
+                                <option value="知识产权">知识产权</option>
+                                <option value="其他">其他</option>
                             </select>
                         </div>
                         
